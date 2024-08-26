@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSTM Model Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
+</head>
+<body>
+    <h1>LSTM Model Demo</h1>
+    
+    <h2>Sender Form</h2>
+    <form id="senderForm">
+        <label for="inputData">Input Data:</label>
+        <input type="text" id="inputData" name="inputData" required>
+        <button type="submit">Send</button>
+    </form>
+
+    <h2>Receiver Form</h2>
+    <form id="receiverForm">
+        <label for="prediction">Prediction:</label>
+        <input type="text" id="prediction" name="prediction" readonly>
+        <button type="button" id="refreshButton">Refresh</button>
+    </form>
+
+    <script>
+        document.getElementById('senderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const inputData = document.getElementById('inputData').value;
+            try {
+                const response = await axios.post('/predict', { input: inputData });
+                console.log('Prediction sent:', response.data.prediction);
+                alert('Data sent successfully!');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error sending data');
+            }
+        });
+
+        document.getElementById('refreshButton').addEventListener('click', async () => {
+            try {
+                const response = await axios.get('/get_latest_prediction');
+                document.getElementById('prediction').value = response.data.prediction;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error fetching prediction');
+            }
+        });
+    </script>
+</body>
+</html>
